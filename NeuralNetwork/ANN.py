@@ -1,5 +1,6 @@
 import numpy as np
 from Layer import Layer
+from backpropagation import backpropagation
 
 class ANN():
 
@@ -10,7 +11,7 @@ class ANN():
         self.output = None
         self.target = None
         self.error = None
-
+        self.desired_error = None
     def set_max_epoch(self, max_epoch):
         self.max_epoch = max_epoch
 
@@ -22,6 +23,9 @@ class ANN():
 
     def set_erf(self, erf):
         self.erf = erf
+
+    def set_desired_error(self, desired_error):
+        self.desired_error = desired_error
 
     def addLayer(self, layer_size, layer_out, activation_function):
         new_layer = Layer(layer_size, layer_out, activation_function)
@@ -49,17 +53,37 @@ class ANN():
             for i in range(0, self.layers[len(layers) - 1], 1):
                 mse += (self.target[i] - self.output[i])
             mse /= 2
-            return mse;
+            self.error = mse
 
 
     def loss_gradient(self):
         if erf == "MSE":
             return self.target - self.output
 
-    #def train(self, input, output):
+    def train(self, input, target):
+        for epoch in range(self.max_epoch):
+            self.run(input)
+            calculate_error()
+            if(self.error < self.desired_error):
+                break
 
-    #def batch_train(self, inputs, outputs, batchsize):
-    #def train(self, input, output):
+            self = backpropagation(self, target)
+            for i in range(0, len(self.layers) - 1, 1):
+                self.layers[i].weight_update = self.layers[i].dWeight + self.layers[i].weight
+                self.layers[i].update_weights()
+                self.layers[i].update_bias()
+
+
+    def batch_train(self, data_set, targets, batch_size):
+        batch_coeff = 1 / batch_size
+        for epoch in range(self.max_epoch):
+            for input_data in range(0, len(data_set), 1):
+                self.run(data_set[input_data])
+                self = backpropagation(self, targets[input_data])
+            for i in range(0, len(self_layers) - 1, 1):
+                self.layers[i].weight_update = batch_coeff * self.layers[i].delta_weights + self.momentum * self.layers[i].weight
+                self.layers[i].update_weights()
+                self.layers[i].update_bias()
 
 
 if __name__ == "__main__":
