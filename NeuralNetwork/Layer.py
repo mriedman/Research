@@ -62,7 +62,6 @@ class Layer():
             #delta weights for backprop // zero vector
             self.dWeight = np.zeros_like(self.weight)
             self.weight_update = np.zeros_like(self.weight)
-            self.dBias = np.zeros_like(self.bias)
 
         else:
             pass
@@ -72,7 +71,13 @@ class Layer():
             B = []
             for i in range(0, self.num_layer_out, 1):
                 B.append(self.random_real())
-            self.bias = np.array(B)
+            self.bias = np.array([B])
+            self.dBias = np.zeros_like(self.bias)
+            """print("+++++++++++++")
+            print(self.num_layer_out)
+            print(self.bias)
+            print("+++++++++++++")
+            """
         else:
             pass
 
@@ -89,22 +94,34 @@ class Layer():
         self.next_z_values = self.weight.dot(self.a_values.T) + self.bias
         return self.next_z_values
         """
+        #layer_in = np.array(layer_in)
         forward_z = np.matmul(self.weight, np.transpose(layer_in)) + np.transpose(self.bias)
-        return forward_z
+        print("=================")
+        print("weight")
+        print(self.weight.shape)
+        print(self.weight)
+        print("layer_in")
+        print(layer_in.shape)
+        print(layer_in)
+        print("bias")
+        print(self.bias.shape)
+        print(self.bias)
+        print("=================")
+        return np.transpose(forward_z)
 
-    def set_delta(delta):
+    def set_delta(self, delta):
         self.delta = delta
 
     def update_weights(self, learning_rate):
         self.weight = self.weight -  learning_rate * self.weight_update
 
     def update_bias(self, learning_rate):
-        self.bias = self.weight - learning_rate * self.dBias
+        self.bias = self.bias - learning_rate * self.dBias
 
-    def return_z_values(self):
+    def get_z_values(self):
         return self.z_values
 
-    def return_activation_values(self):
+    def get_activation_values(self):
         return self.a_values
 
 if __name__ == "__main__":
