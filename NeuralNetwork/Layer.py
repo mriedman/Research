@@ -13,8 +13,8 @@ class Layer():
 
         self.delta = None
         self.dWeight = None
+        self.weight_update = None
 
-        self.delta_bias = None
         self.dBias = None
 
         np.random.seed(0)
@@ -61,7 +61,9 @@ class Layer():
             self.weight = np.array(W)
             #delta weights for backprop // zero vector
             self.dWeight = np.zeros_like(self.weight)
+            self.weight_update = np.zeros_like(self.weight)
             self.dBias = np.zeros_like(self.bias)
+
         else:
             pass
 
@@ -92,6 +94,12 @@ class Layer():
 
     def set_delta(delta):
         self.delta = delta
+
+    def update_weights(self, learning_rate):
+        self.weight = self.weight -  learning_rate * self.weight_update
+
+    def update_bias(self, learning_rate):
+        self.bias = self.weight - learning_rate * self.dBias
 
     def return_z_values(self):
         return self.z_values
