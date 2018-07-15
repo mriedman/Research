@@ -1,25 +1,45 @@
-import numpy as np;
+import numpy as np
 import random
 import math
 
 class Layer():
-    def __init__(self, prev_layer_size, layer_size, num_layer_out, activation_function):
-        self.prev_layer_size = prev_layer_size
+    def __init__(self, layer_size, num_layer_out, layer_type):
         self.layer_size = layer_size
         self.num_layer_out = num_layer_out
-        self._activation_function = activation_function
+        self.layer_type = layer_type
+
+        self.z_values = None
+        self.a_values = None
+
+        self.delta = None
+        self.dWeight = None
+
+        self.delta_bias = None
+        self.dBias = None
 
         np.random.seed(0)
 
     def activation_function(self, x):
-        if(self._activation_function == "sigmoid"):
+
+        if(self.layer_type == "sigmoid"):
             return 1 / (1 + np.exp(x))
-        elif(self._activation_function == "tanh"):
+        elif(self.layer_type == "tanh"):
             return np.tanh(x)
-        elif(self._activation_function == "linear"):
+        elif(self.layer_type == "linear"):
             return x
+        else:
+            return None
         #elif(self.activation_function == "relu"):
         #    return x[x<0] =0
+    def activation_function_derivative(self, x):
+            if(self.layer_type == "sigmoid"):
+                return self.activation_function(x) * (1 - self.activation_function(x))
+            elif(self.layer_type == "tanh"):
+                return (1 - np.tanh(x)**2)
+            elif(self.layer_type == "linear"):
+                return 1
+            else:
+                return None
 
     def random_real(self):
         n = self.layer_size
@@ -28,36 +48,59 @@ class Layer():
         return random.uniform(lower, upper)
 
     def initialize_weights(self):
-        W = []
-        for i in range(0, self.num_layer_out, 1):
-            Wi = []
-            for j in range(0, self.layer_size, 1):
-                Wij = self.random_real()
-                Wi.append(Wij)
+        if self.num_layer_out != "output":
+            #weights
+            W = []
+            for i in range(0, self.num_layer_out, 1):
+                Wi = []
+                for j in range(0, self.layer_size, 1):
+                    Wij = self.random_real()
+                    Wi.append(Wij)
 
-            W.append(Wi)
-        self.weight = np.array(W)
+                W.append(Wi)
+            self.weight = np.array(W)
+            #delta weights for backprop // zero vector
+            self.dWeight = np.zeros_like(self.weight)
+            self.dBias = np.zeros_like(self.bias)
+        else:
+            pass
 
     def initialize_bias(self):
-        B = []
-        for i in range(0, self.num_layer_out, 1):
-            B.append(self.random_real())
-        self.bias = np.array(B)
+        if self.num_layer_out != "output":
+            B = []
+            for i in range(0, self.num_layer_out, 1):
+                B.append(self.random_real())
+            self.bias = np.array(B)
+        else:
+            pass
 
-    def forward_pass(self, prev_z):
-        self.z_values = self.weight.dot(prev_z) + self.bias
+    def activate(self, zvals):
+        self.z_values = zvals
         self.a_values = self.activation_function(self.z_values)
         return self.a_values
 
-    def return_neuron_z_values(self):
+
+    def forward_pass(self, layer_in):
+        """
+        self.z_values = layer_in
+        self.activate(self.z_values)
+        self.next_z_values = self.weight.dot(self.a_values.T) + self.bias
+        return self.next_z_values
+        """
+        forward_z = np.matmul(self.weight, np.transpose(layer_in)) + np.transpose(self.bias)
+        return forward_z
+
+    def set_delta(delta):
+        self.delta = delta
+
+    def return_z_values(self):
         return self.z_values
 
-    def return_neuron_activation_values(self):
+    def return_activation_values(self):
         return self.a_values
 
-
 if __name__ == "__main__":
-    layer = Layer(3,3,4, "linear")
+    layer = Layer(3,4, "linear")
     layer.initialize_weights()
     layer.initialize_bias()
     input = np.array([1,0,0])
