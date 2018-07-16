@@ -2,6 +2,8 @@ from ANN import *
 from Layer import *
 import numpy as np
 
+
+
 def backpropagation(neuralnet):
 
     #output layer delta
@@ -27,10 +29,6 @@ def backpropagation(neuralnet):
         neuralnet.layers[i].dWeight = neuralnet.layers[i].dWeight + np.matmul(neuralnet.layers[i+1].delta, np.transpose(a_vals))
         #neuralnet.layers[i].dBias = neuralnet.layers[i].dBias + np.matmul(neuralnet.layers[i+1].delta, np.transpose(a_vals))
         neuralnet.layers[0].dBias = neuralnet.layers[0].dBias + neuralnet.layers[1].delta
-        print("+++++++++++")
-        print("bias")
-        print(neuralnet.layers[i].dBias)
-        print("+++++++++++")
 
 
     return neuralnet
