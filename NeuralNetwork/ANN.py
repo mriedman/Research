@@ -1,6 +1,6 @@
 import numpy as np
 from Layer import Layer
-import backpropagation
+import backprop
 
 class ANN():
 
@@ -52,8 +52,8 @@ class ANN():
 
         if self.erf == "MSE":
             mse = 0
-            for i in range(0, len(self.output[0]) - 1, 1):
-                mse += (self.target[0][i] - self.output[0][i])
+            for i in range(0, len(self.output[0]), 1):
+                mse += (self.target[0][i] - self.output[0][i])**2
             mse /= 2
             self.error = mse
 
@@ -67,15 +67,17 @@ class ANN():
 
         for epoch in range(0, self.max_epoch, 1):
             self.run(_input)
-            print("====OUTPUT====")
-            print(self.output)
-            print("---loss gradient---")
-            print(self.loss_gradient())
-            print("==============")
             self.calculate_error()
-            #if(self.error < self.desired_error):
-            #    break
-            self = backpropagation.backpropagation(self)
+            print("====EPOCH " + str(epoch + 1) + " ====")
+            print("---OUTPUT---")
+            print(self.output)
+            print("---ERROR---")
+            print(self.error)
+            print("==============")
+
+            if(self.error < self.desired_error):
+                break
+            self = backprop.backpropagation(self)
             for i in range(0, len(self.layers) - 1, 1):
                 self.layers[i].weight_update = self.layers[i].dWeight + self.layers[i].weight
                 #print(self.layers[i].weight_update)
@@ -88,3 +90,35 @@ class ANN():
                 self.layers[i].a_values = None
                 self.layers[i].delta = None
         self.target = None
+
+    def batch_train(self, data_set, targets, batch_size):
+        batch_coeff = 1 / batch_size
+        for epoch in range(self.max_epoch):
+            for input_data in range(0, len(data_set), 1):
+                if self.target == None:
+                    self.target = np.transpose(np.array([targets[input_data]]))
+                self.run(data_set[input_data])
+                self.calculate_error()
+                print("====EPOCH " + str(epoch + 1) + "====")
+                print("++input " + str(input_data + 1) + "++")
+                print("---OUTPUT---")
+                print(self.output)
+                print("---ERROR---")
+                print(self.error)
+                print("==============")
+
+                self = backprop.backpropagation(self)
+
+                self._input = None
+                self.output = None
+                self.target = None
+                for i in range(0, len(self.layers) - 1, 1):
+                    self.layers[i].z_values = None
+                    self.layers[i].a_values = None
+                    self.layers[i].delta = None
+
+            for i in range(0, len(self.layers) - 1, 1):
+                self.layers[i].weight_update = batch_coeff * self.layers[i].dWeight + self.momentum * self.layers[i].weight
+                self.layers[i].dBias = batch_coeff
+                self.layers[i].update_weights(self.learning_rate)
+                self.layers[i].update_bias(self.learning_rate)
