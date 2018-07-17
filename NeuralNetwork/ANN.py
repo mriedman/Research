@@ -35,6 +35,14 @@ class ANN():
 
         self.layers.append(new_layer)
 
+    def createFromArrays(self,layer_sizes,activation_function):
+        self.addLayer(layer_sizes[0],layer_sizes[1],"input")
+        if len(layer_sizes)!=len(activation_function)+1:
+            raise Exception("Array lengths don't match")
+        for i in range(1,len(layer_sizes)-1):
+            self.addLayer(layer_sizes[i],layer_sizes[i+1],activation_function[i-1])
+        self.addLayer(layer_sizes[-1],"output",activation_function[-1])
+
     def run(self, _input):
         if self._input == None:
             self._input = np.transpose(np.array([_input]))

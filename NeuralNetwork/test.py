@@ -2,10 +2,7 @@ from ANN import *
 
 if __name__ == "__main__":
     test = ANN()
-    test.addLayer(2, 3, "input")
-    test.addLayer(3, 1, "sigmoid")
-    test.addLayer(1, "output", "sigmoid")
-
+    test.createFromArrays([2,3,1],["sigmoid","sigmoid"])
 
     test.set_max_epoch(50)
     test.set_desired_error(0.001)
