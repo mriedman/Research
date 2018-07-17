@@ -19,6 +19,4 @@ if __name__ == "__main__":
 
     test.train(_input, output)
 
-    test.run(_input)
-    _output = test.get_output()
-    print(_output)
+
