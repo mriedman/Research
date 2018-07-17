@@ -1,6 +1,6 @@
 import numpy as np
 from Layer import Layer
-import backprop
+import backpropagation
 
 class ANN():
 
@@ -38,7 +38,8 @@ class ANN():
     def run(self, _input):
         if self._input == None:
             self._input = np.transpose(np.array([_input]))
-
+        elif self._input != _input:
+            self._input = np.transpose(np.array([_input]))
         layer_forward = self.layers[0].forward_pass(self._input)
         for i in range(1, len(self.layers) - 1, 1):
             layer_forward = self.layers[i].forward_pass(layer_forward)
@@ -77,7 +78,7 @@ class ANN():
 
             if(self.error < self.desired_error):
                 break
-            self = backprop.backpropagation(self)
+            self = backpropagation.backpropagation(self)
             for i in range(0, len(self.layers) - 1, 1):
                 self.layers[i].weight_update = self.layers[i].dWeight + self.layers[i].weight
                 #print(self.layers[i].weight_update)
@@ -99,26 +100,30 @@ class ANN():
                     self.target = np.transpose(np.array([targets[input_data]]))
                 self.run(data_set[input_data])
                 self.calculate_error()
-                print("====EPOCH " + str(epoch + 1) + "====")
-                print("++input " + str(input_data + 1) + "++")
-                print("---OUTPUT---")
-                print(self.output)
-                print("---ERROR---")
-                print(self.error)
-                print("==============")
 
-                self = backprop.backpropagation(self)
+                if epoch % 100 == 0:
+                    print("====EPOCH " + str(epoch + 1) + "====")
+                    print("++input " + str(input_data + 1) + "++")
+                    print("---OUTPUT---")
+                    print(self.output)
+                    print("---ERROR---")
+                    print(self.error)
+                    print("==============")
+
+                self = backpropagation.backpropagation(self)
 
                 self._input = None
                 self.output = None
                 self.target = None
+                """
                 for i in range(0, len(self.layers) - 1, 1):
                     self.layers[i].z_values = None
                     self.layers[i].a_values = None
                     self.layers[i].delta = None
-
+                """
             for i in range(0, len(self.layers) - 1, 1):
                 self.layers[i].weight_update = batch_coeff * self.layers[i].dWeight + self.momentum * self.layers[i].weight
-                self.layers[i].dBias = batch_coeff
+                #print(self.layers[i].weight_update)
+                #print(self.layers[i].dBias)
                 self.layers[i].update_weights(self.learning_rate)
                 self.layers[i].update_bias(self.learning_rate)
