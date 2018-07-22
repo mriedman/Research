@@ -5,7 +5,7 @@ import backpropagation
 class ANN():
 
     def __init__(self, layersinit=None):
-        if layersinit == None:
+        if layersinit is None:
             self.layers = []
         self._input = None
         self.output = None
@@ -44,9 +44,9 @@ class ANN():
         self.addLayer(layer_sizes[-1],"output",activation_function[-1])
 
     def run(self, _input):
-        if self._input == None:
+        if self._input is None:
             self._input = np.transpose(np.array([_input]))
-        elif self._input != _input:
+        elif self._input is not _input:
             self._input = np.transpose(np.array([_input]))
         layer_forward = self.layers[0].forward_pass(self._input)
         for i in range(1, len(self.layers) - 1, 1):
@@ -66,7 +66,7 @@ class ANN():
             mse /= 2
             self.error = mse
 
-    def loss_gradient(self):
+    def loss_gradient_wrt_output(self):
         if self.erf == "MSE":
             return self.target - self.output
 
