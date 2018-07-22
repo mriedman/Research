@@ -9,7 +9,7 @@ def backpropagation(neuralnet):
     #output layer delta
     output_z = neuralnet.layers[len(neuralnet.layers) - 1].get_z_values() #column vector
     output_dz = neuralnet.layers[len(neuralnet.layers) - 1].activation_function_derivative(output_z) #column vector
-    delta_output = neuralnet.loss_gradient() #* output_dz #column vector
+    delta_output = neuralnet.loss_gradient_wrt_output() #* output_dz #column vector
     neuralnet.layers[len(neuralnet.layers) - 1].set_delta(delta_output) #column vector
 
     #get hidden layer deltas
