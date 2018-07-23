@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     #test adam
 
-    _input = [1, 1]
+    _input = [1, 2]
     target = [0]
     test.run(_input)
     print(test.output)
